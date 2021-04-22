@@ -10,6 +10,23 @@ const routing = require('./routes')
 const { connectionStr} = require('./config')
 const cors = require('koa2-cors')
 
+// socket.io
+const server = require('http').createServer(app.callback())
+const io = require('socket.io')(server, {
+    transports: ['websocket']
+})
+
+io.on('connection', socket => {
+    console.log('连接成功')
+    // 发送
+    socket.emit('test1', {'test': 1})
+    // 接收
+    socket.on('test2', data => {
+      console.log('收到', data)
+    })
+})
+server.listen(8000)
+
 mongoose.connect(connectionStr, { useNewUrlParser: true,useUnifiedTopology: true },() => console.log('MongoDB 连接成功了！'))
 mongoose.connection.on('error', console.error)
 
